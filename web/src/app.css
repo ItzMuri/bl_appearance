@@ -55,7 +55,7 @@ input[type=text] {
 }
 
 input::selection {
-    background: #8685ef80;
+    background: #86c00080;
 }
 
 .btn-base {
@@ -64,26 +64,36 @@ input::selection {
 
 button.btn,
 .btn {
-    @apply bg-primary/50 border border-secondary/50 transition-all duration-300 ease-in-out hover:brightness-125;
+    border-style: solid;
+    border-radius: 3px;
+    border-width: 0.15rem;
+    border-color: rgba(110, 110, 119, 0.925);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.089) 0%, rgba(77, 79, 87, 0.177) 100%);
 }
 
 button:disabled,
 .btn:disabled {
-    @apply brightness-50 !important;
+    background: radial-gradient(circle, rgba(133, 58, 59, 0.089) 0%, rgba(105,46,47, 0.177) 100%) !important;
+    border-style: solid;
+    border-width: 0.15rem;
+    border-color: rgb(137, 60, 61);
 }
 
 ::-webkit-scrollbar {
-    @apply w-[0.5vh] h-[0.5vh] bg-primary/80
+    width: 0.35rem;
+    border-radius: 2.23rem;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-    @apply hidden
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2.33rem;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    @apply bg-accent
+    background-color: #518f00b4;
+    border-radius: 2.23rem;
 }
 
 .parent-container {
@@ -99,5 +109,9 @@ button:disabled,
 }
 
 .bg-solid {
-    background: radial-gradient(at 50% top, var(--primary) 50%, black); 
+    border-style: solid;
+    border-radius: 3px;
+    border-width: 0.15rem;
+    border-color: rgba(110, 110, 119, 0.925);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.089) 0%, rgba(77, 79, 87, 0.177) 100%);
 }

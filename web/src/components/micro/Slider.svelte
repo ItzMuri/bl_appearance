@@ -53,18 +53,20 @@
 
     input#slider[type='range']::-webkit-slider-runnable-track {
         width: 100%;
-        height: 0.5vw;
+        height: 0.3vw;
         cursor: pointer;
-        background:
-            linear-gradient(var(--primary), var(--primary)) 0 / var(--sx) 100%
-                no-repeat,
-            var(--primary) 0 / var(--sx) 100% no-repeat;
+        background: radial-gradient(circle, rgb(74, 94, 38) 0%, rgba(129, 206, 4, 0.795) 100%);
+        border-style: solid;
+        border-radius: 3px;
+        border-width: 0.1px;
+        border-color: rgba(134, 164, 77, 0.644);
     }
 
     input#slider[type='range']::-webkit-slider-thumb {
-        height: 1vw;
-        width: 1vw;
-        background: white;
+        height: 0.8vw;
+        width: 0.4vw;
+        background: rgb(255, 255, 255);
+        border-radius: 50px;
         cursor: pointer;
         -webkit-appearance: none;
         margin-top: -0.25vw;
@@ -76,7 +78,7 @@
     }
 
     input#slider[type='range']::-webkit-slider-thumb:hover {
-        background: var(--accent);
+        background: rgb(0, 162, 255);
         filter: drop-shadow(0 0 0.25vw var(--accent));
     }
     input#slider[type='range']::-webkit-progress-value {
