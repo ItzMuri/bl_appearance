@@ -11,25 +11,24 @@
 
 
 export default {
-    content: [
-        "./index.html",
-        "./src/**/*.{svelte,js,ts,jsx,tsx}",
-      ],
-  theme: {
-    extend: {
-        colors: {
-            'primary': '#252525',
-            'secondary': '#3C3C3C',
-            'accent': '#8685ef',
+  content: [
+      "./index.html",
+      "./src/**/*.{svelte,js,ts,jsx,tsx}",
+    ],
+theme: {
+  extend: {
+      colors: {
+          'primary': '#a9e34b',
+          'secondary': '#3C3C3C',
+          'accent': '#a9e34b93',
 
-            'success': '#7FEB9D',
-            'error': '#E5283E',
+          'success': '#7FEB9D',
+          'error': '#E5283E',
 
-            'txt-primary': '#faf7ff',
-            'txt-secondary': '#2b2b2b',
-        },
-    },
+          'txt-primary': '#faf7ff',
+          'txt-secondary': '#2b2b2b',
+      },
   },
-  plugins: [],
+},
+plugins: [],
 }
-
