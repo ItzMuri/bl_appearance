@@ -1,4 +1,4 @@
-import { TAppearance, THairColor, TClothes, TSkin, TValue, THeadStructure } from "@typings/appearance";
+import { TAppearance, THairColor, TClothes, TSkin, TValue, THeadStructure, HeadOverlayData } from "@typings/appearance";
 import TOGGLE_INDEXES from "@data/toggles"
 import { requestModel, ped, updatePed, isPedFreemodeModel} from '@utils';
 import { TTattoo } from "@typings/tattoos";
@@ -119,19 +119,17 @@ export function setHeadBlend(pedHandle: number, data) {
 }
 exports('SetPedHeadBlend', setHeadBlend);
 
-export function setHeadOverlay(pedHandle: number, data) {
+export function setHeadOverlay(pedHandle: number, data: HeadOverlayData & { id?: string, value?: number }) {
     if (!data) return console.warn('No data provided for setHeadOverlay')
 
     const index = data.index
+    const value = data.value || data.overlayValue
 
     if (index === 13) {
-        SetPedEyeColor(pedHandle, data.value)
+        SetPedEyeColor(pedHandle, value)
         return
     }
 
-    const value = data.overlayValue
-
-    /* Hair color does not have an index, only an ID so we'll check for that */
     if (data.id === 'hairColor') {
         SetPedHairTint(pedHandle, data.hairColor, data.hairHighlight)
         return;
@@ -141,7 +139,6 @@ export function setHeadOverlay(pedHandle: number, data) {
     SetPedHeadOverlayColor(pedHandle, index, 1, data.firstColor, data.secondColor)
 }
 exports('SetPedHeadOverlay', setHeadOverlay);
-
 
 export function resetToggles(data) {
     const drawables = data.drawables
@@ -183,7 +180,7 @@ export function setPedClothes(pedHandle: number, data: TClothes) {
     }
 
     if (headOverlay) for (const id in headOverlay) {
-        const overlay = headOverlay[id]
+        const overlay = {...headOverlay[id], id: id}
         setHeadOverlay(pedHandle, overlay)
     }
 }
@@ -216,7 +213,7 @@ export function setPedTattoos(pedHandle: number, data: TTattoo[]) {
             const collection = GetHashKey(tattooData.dlc)
             const tattoo = tattooData.hash
             const tattooOpacity = Math.round((tattooData.opacity || 0.1) * 10)
-            for (let j = 1; j < tattooOpacity; j++) {
+            for (let j = 0; j < tattooOpacity; j++) {
                 AddPedDecorationFromHashes(pedHandle, collection, tattoo);
             }
         }

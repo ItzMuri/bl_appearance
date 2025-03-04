@@ -8,23 +8,66 @@
     import { slide } from 'svelte/transition';
     import IconPlus from '@components/icons/IconPlus.svelte';
     import IconImport from '@components/icons/IconImport.svelte';
-
+    import { TOutfitData } from '@typings/apperance';
 
     let renameIndex: number = -1;
     let renameLabel: string = '';
-
     let deleteIndex: number = -1;
-
     let isAdding: boolean = false;
     let isJobAdding: boolean = false;
     let isImporting: boolean = false;
     let newOutfitLabel: string = '';
     let newOutfitJobRank: number = 0;
-    let importOutfitId: number;
+    let importOutfitId: number = 0;
+
+    const handleRename = (index: number) => {
+        if (renameLabel.length > 0) {
+            $OUTFITS[index].label = renameLabel;
+            renameIndex = -1;
+            OUTFITS.edit($OUTFITS[index]);
+        }
+    };
+
+    const handleOutfitAction = (
+        action: string,
+        index: number,
+        outfit: TOutfitData | null = null,
+        label?: string
+    ) => {
+        switch (action) {
+            case 'use':
+                if (outfit) {
+                    OUTFITS.use(outfit);
+                }
+                break;
+            case 'share':
+                OUTFITS.share(index);
+                break;
+            case 'item':
+                if (outfit) {
+                    OUTFITS.item(outfit, (renameLabel !== '') ? renameLabel : label)
+                }
+                break;
+            case 'delete':
+                OUTFITS.delete(index);
+                break;
+        }
+    };
+
+    const resetNewOutfitFields = () => {
+        isAdding = false;
+        isJobAdding = false;
+        newOutfitLabel = '';
+        newOutfitJobRank = 0;
+    };
+
+    const resetImportFields = () => {
+        isImporting = false;
+        importOutfitId = 0;
+    };
 </script>
 
 {#each $OUTFITS as { label, outfit, id, jobname }, i}
-
     <Wrapper label={jobname ? `${label} | JOB` : label}>
         <svelte:fragment slot="extra_primary">
             <Dropdown display="Options">
@@ -32,9 +75,7 @@
                     class="w-full flex items-center justify-center gap-[0.5vh] h-[3vh]"
                 >
                     <button
-                        on:click={() => {
-                            OUTFITS.use(outfit);
-                        }}
+                        on:click={() => handleOutfitAction('use', i, outfit)}
                         class="btn w-full">{$LOCALE.USE_TITLE}</button
                     >
                     <button
@@ -48,17 +89,13 @@
                     {#if !jobname}
                         <button
                             disabled={jobname != null && !$JOBDATA.isBoss}
-                            on:click={() => {
-                                OUTFITS.share(id);
-                            }}
+                            on:click={() => handleOutfitAction('share', id)}
                             class="btn w-full"
                             >{$LOCALE.SHAREOUTFIT_TITLE}</button
                         >
                     {/if}
                     <button
-                        on:click={() => {
-                            OUTFITS.item(outfit, label);
-                        }}
+                        on:click={() => handleOutfitAction('item', i, outfit, label)}
                         class="btn w-full">{$LOCALE.ITEMOUTFIT_TITLE}</button
                     >
                     <button
@@ -91,13 +128,7 @@
                             <IconCancel />
                         </button>
                         <button
-                            on:click={() => {
-                                if (renameLabel.length > 0) {
-                                    $OUTFITS[i].label = renameLabel;
-                                    renameIndex = -1;
-                                    OUTFITS.edit($OUTFITS[i]);
-                                }
-                            }}
+                            on:click={() => handleRename(i)}
                             class="btn h-full aspect-square p-[0.5vh]"
                         >
                             <IconCheck />
@@ -115,25 +146,22 @@
                             on:click={() => (deleteIndex = -1)}
                             >{$LOCALE.CANCEL_TITLE}</button
                         >
-
                         <button
                             class="btn w-full h-full"
-                            on:click={() => {
-                                OUTFITS.delete(id);
-                            }}>{$LOCALE.CONFIRMREM_SUBTITLE}</button
+                            on:click={() => handleOutfitAction('delete', id)}
+                            >{$LOCALE.CONFIRMREM_SUBTITLE}</button
                         >
                     </div>
                 {/if}
             </Dropdown>
         </svelte:fragment>
-
         <Divider />
     </Wrapper>
 {:else}
     <Wrapper label={$LOCALE.NO_OUTFITS} />
 {/each}
 
-<div class="w-full h-fit grid place-items-centyer">
+<div class="w-full h-fit grid place-items-center">
     {#if isAdding || isJobAdding}
         <div transition:slide class="w-full h-full">
             <Wrapper label={$LOCALE.NEWOUTFIT_TITLE}>
@@ -157,17 +185,11 @@
                             />
                         {/if}
                         <button
-                            on:click={() => {
-                                isAdding = false;
-                                isJobAdding = false;
-                                newOutfitLabel = '';
-                                newOutfitJobRank = 0;
-                            }}
+                            on:click={resetNewOutfitFields}
                             class="btn h-full aspect-square p-[0.5vh]"
                         >
                             <IconCancel />
                         </button>
-
                         <button
                             on:click={() => {
                                 if (newOutfitLabel.length > 0) {
@@ -180,10 +202,7 @@
                                               }
                                             : null,
                                     );
-                                    isAdding = false;
-                                    isJobAdding = false;
-                                    newOutfitLabel = '';
-                                    newOutfitJobRank = 0;
+                                    resetNewOutfitFields();
                                 }
                             }}
                             class="btn h-full aspect-square p-[0.5vh]"
@@ -208,10 +227,7 @@
                             bind:value={importOutfitId}
                         />
                         <button
-                            on:click={() => {
-                                isImporting = false;
-                                importOutfitId = null;
-                            }}
+                            on:click={resetImportFields}
                             class="btn h-full aspect-square p-[0.5vh]"
                         >
                             <IconCancel />
@@ -220,8 +236,7 @@
                             on:click={() => {
                                 if (importOutfitId > 0) {
                                     OUTFITS.import(importOutfitId);
-                                    isImporting = false;
-                                    importOutfitId = null;
+                                    resetImportFields();
                                 }
                             }}
                             class="btn h-full aspect-square p-[0.5vh]"
@@ -243,7 +258,6 @@
             <div class="h-[60%] aspect-square grid place-items-center">
                 <IconPlus />
             </div>
-
             <p>{$LOCALE.ADDOUTFIT_TITLE}</p>
         </button>
 
@@ -258,7 +272,6 @@
                 <div class="h-[60%] aspect-square grid place-items-center">
                     <IconPlus />
                 </div>
-
                 <p>{$LOCALE.ADDJOBOUTFIT}</p>
             </button>
         {/if}
@@ -273,7 +286,6 @@
             <div class="h-[60%] aspect-square grid place-items-center">
                 <IconImport />
             </div>
-
             <p>{$LOCALE.IMPORTOUTFIT_TITLE}</p>
         </button>
     {/if}

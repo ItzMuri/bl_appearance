@@ -70,18 +70,25 @@ if (core == 'qb' || core == 'qbx' && GetResourceState(frameworkName) == 'started
 
 illeniumCompat();
 
-RegisterCommand('reloadskin', async () => {
-    const frameworkID = await getFrameworkID()
-    const health = GetEntityHealth(ped);
+async function reloadSkin() {
+    const frameworkID = await getFrameworkID();
+    const ped = PlayerPedId();
     const maxhealth = GetEntityMaxHealth(ped);
+
+    const health = GetEntityHealth(ped);
     const armor = GetPedArmour(ped);
 
-    const appearance = await triggerServerCallback<TAppearance>('bl_appearance:server:getAppearance', frameworkID)
+    const appearance = await triggerServerCallback<TAppearance>('bl_appearance:server:getAppearance', frameworkID);
     if (!appearance) return;
-    await setPlayerPedAppearance(appearance)
+    await setPlayerPedAppearance(appearance);
 
-    SetPedMaxHealth(ped, maxhealth)
-    delay(1000) 
-    SetEntityHealth(ped, health)
-    SetPedArmour(ped, armor)
-}, false)
+    SetPedMaxHealth(ped, maxhealth);
+    await Delay(1000);
+
+    SetEntityHealth(ped, health);
+    SetPedArmour(ped, armor);
+
+}
+
+onNet('bl_appearance:client:reloadSkin', async () => await reloadSkin());
+RegisterCommand('reloadskin', async () => await reloadSkin(), false);
